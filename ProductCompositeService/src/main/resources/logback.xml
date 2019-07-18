@@ -1,0 +1,41 @@
+<configuration scan="true" scanPeriod="10 seconds" debug="true">
+    <property name="FILE_LOG_PATTERN"
+        value="%d{yyyy-MM-dd HH:mm:ss.SSS} |%level| %thread | %logger{36} |%X{request-id}| %msg%n" />
+    <property name="APP_LOG_FILE" value="/opt/logs/ProductCompositeService.log" />
+    <property name="LOG_LEVEL_THIRD_PARTY" value="warn" />
+    <property name="LOG_LEVEL" value="debug" />    
+	
+    <appender name="app_file_appender"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${APP_LOG_FILE}</file>
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${APP_LOG_FILE}.%i</fileNamePattern>
+            <!--<maxHistory>2</maxHistory> -->
+            <minIndex>1</minIndex>
+            <maxIndex>3</maxIndex>
+        </rollingPolicy>
+        <triggeringPolicy
+            class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy>
+    </appender>
+
+    <!-- Application Logger -->
+    <logger name="com.myretail.productapi" level="${LOG_LEVEL}" additivity="false">
+        <!--<appender-ref ref="console" /> -->
+        <appender-ref ref="app_file_appender" />
+    </logger>
+  
+    <!-- 3rdparty Loggers -->
+    <logger name="org.springframework" level="${LOG_LEVEL_THIRD_PARTY}"
+                additivity="false">
+        <appender-ref ref="app_file_appender" />
+    </logger>
+    
+    <root level="debug">
+        <appender-ref ref="app_file_appender" />
+    </root>
+</configuration>
